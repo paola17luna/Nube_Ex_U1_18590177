@@ -18,7 +18,7 @@ if password_file:
         password = archivo.read().strip()
 
     database_url = URL.create(
-        drivername="postgresql+psycopg2",
+        drivername="postgresql+psycopg",
         username=os.getenv("POSTGRES_USER", "paola"),
         password=password,
         host=os.getenv("POSTGRES_HOST", "paola_postgres"),
