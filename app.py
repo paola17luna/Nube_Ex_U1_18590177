@@ -9,10 +9,27 @@ load_dotenv()
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///:memory:"
-)
+from sqlalchemy.engine import URL
+
+password_file = os.getenv("POSTGRES_PASSWORD_FILE")
+
+if password_file:
+    with open(password_file, "r", encoding="utf-8") as archivo:
+        password = archivo.read().strip()
+
+    database_url = URL.create(
+        drivername="postgresql+psycopg2",
+        username=os.getenv("POSTGRES_USER", "paola"),
+        password=password,
+        host=os.getenv("POSTGRES_HOST", "paola_postgres"),
+        port=5432,
+        database=os.getenv("POSTGRES_DB", "paola_db")
+    )
+
+else:
+    database_url = os.getenv("DATABASE_URL") or "sqlite:///:memory:"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
